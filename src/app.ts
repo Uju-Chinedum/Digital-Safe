@@ -4,6 +4,8 @@ import express, { json } from "express";
 import morgan from "morgan";
 import { connectDB } from "./db/connect";
 import authRouter from "./routes/auth.route";
+import notFound from "./middleware/notFound";
+import errorHandler from "./middleware/errors";
 
 dotenv.config();
 
@@ -14,6 +16,9 @@ app.use(json());
 app.use(morgan("dev"));
 
 app.use("/api/v1/auth", authRouter);
+
+app.use(notFound);
+app.use(errorHandler);
 
 const start = async () => {
   try {
