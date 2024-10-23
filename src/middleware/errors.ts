@@ -10,9 +10,9 @@ const errorHandler = (
   next: NextFunction,
 ) => {
   let customError: CustomError = {
-    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-    name: "Internal Server Error",
-    message: "Something went wrong!! Please try again.",
+    statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+    name: err.name || "Internal Server Error",
+    message: err.message || "Something went wrong!! Please try again.",
   };
 
   // Validation Error
