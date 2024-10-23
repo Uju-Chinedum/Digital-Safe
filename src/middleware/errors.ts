@@ -1,15 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import mongoose from "mongoose";
 import CustomError from "../errors";
-import {
-  isMongoCastError,
-  isMongoDuplicateKeyError,
-  isMongooseError,
-} from "../utils";
-import mongoose, { Error as MongooseError } from "mongoose";
 
 const errorHandler = (
-  err: unknown,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction,
@@ -20,42 +15,40 @@ const errorHandler = (
     message: "Something went wrong!! Please try again.",
   };
 
-  // Handle Mongoose validation errors
-  if (isMongooseError(err)) {
-    if (err instanceof mongoose.Error.ValidationError) {
-      customError.name = "Validation Error";
-      customError.message = Object.values(err.errors)
-        .map((item) => item.message)
-        .join(", ");
-      customError.statusCode = StatusCodes.BAD_REQUEST;
-    }
+  // Validation Error
+  if (err.name === "ValidationError") {
+    customError.name = "Validation Error";
 
-    // Handle duplicate key errors
-    else if (isMongoDuplicateKeyError(err)) {
-      customError.name = "Duplicate Values";
-      customError.message = `This ${Object.keys(err.keyValue).join(", ")} is already used by a user. Please use another ${Object.keys(err.keyValue).join(", ")}.`;
-      customError.statusCode = StatusCodes.BAD_REQUEST;
-    }
-
-    // Handle cast errors
-    else if (isMongoCastError(err)) {
-      customError.name = "Not Found";
-      customError.message = `No item found with id: ${err.value}`;
-      customError.statusCode = StatusCodes.NOT_FOUND;
-    }
+    const validationErrors = err.errors as mongoose.Error.ValidationError; // Type assertion
+    customError.message = Object.values(validationErrors)
+      .map((item) => item.message)
+      .join(", ");
+      
+    customError.statusCode = StatusCodes.BAD_REQUEST;
   }
 
-  // If err is a generic error
-  else if (err instanceof Error) {
-    customError.name = err.name || "Internal Server Error";
-    customError.message =
-      err.message || "Something went wrong!! Please try again.";
+  // Duplicate Error
+  if (err.code && err.code === 11000) {
+    customError.name = "Duplicate Values";
+    customError.message = `This ${Object.keys(
+      err.keyValue,
+    )} is already used by a user. Please use another ${Object.keys(
+      err.keyValue,
+    )}.`;
+    customError.statusCode = StatusCodes.BAD_REQUEST;
   }
 
-  // Send the response
-  res
-    .status(customError.statusCode)
-    .json({ code: customError.statusCode, data: customError });
+  // Type Error
+  if (err.name === "CastError") {
+    customError.name = "Not Found";
+    customError.message = `No item found with id: ${err.value}`;
+    customError.statusCode = StatusCodes.NOT_FOUND;
+  }
+
+  res.status(customError.statusCode).json({
+    code: customError.statusCode,
+    data: customError,
+  });
 };
 
 export default errorHandler;

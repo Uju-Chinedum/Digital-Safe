@@ -27,7 +27,16 @@ const UserSchema = new Schema<IUser>(
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: {
+      // Automatically remove password when converting to JSON
+      transform(doc, ret) {
+        delete ret.password;
+        return ret;
+      },
+    },
+  },
 );
 
 UserSchema.pre("save", async function () {
