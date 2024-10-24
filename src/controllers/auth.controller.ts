@@ -9,12 +9,12 @@ import { TokenPayload } from "../utils/types";
 export const register = async (req: Request, res: Response) => {
   if (!req.body)
     throw new BadRequest("Validation Error", "Please fill missing fields.");
-  
+
   const user: IUser = await UserModel.create(req.body);
 
   res.status(StatusCodes.CREATED).json({
     code: StatusCodes.CREATED,
-    data: user,
+    data: { message: "User created successfully", user },
   });
 };
 
@@ -24,9 +24,9 @@ export const login = async (req: Request, res: Response) => {
     throw new BadRequest("Missing Details", "Please provide all details");
   }
 
-  const user = await UserModel.findOne({ email }) as IUser;
+  const user = (await UserModel.findOne({ email })) as IUser;
   if (!user) {
-    throw new Unauthenticated("Validation Error", "Invalid Credentials")
+    throw new Unauthenticated("Validation Error", "Invalid Credentials");
   }
 
   const checkPassword = await user.comparePassword(password);
@@ -38,12 +38,15 @@ export const login = async (req: Request, res: Response) => {
   const token = createJWT(payload);
 
   res.status(StatusCodes.OK).json({
-    message: "User logged in successfully",
-    user,
-    token,
+    code: StatusCodes.OK,
+    data: {
+      message: "User logged in successfully",
+      user,
+      token,
+    },
   });
 };
 
 export const logout = async (req: Request, res: Response) => {
-  res.send("logout");
+  res.status(StatusCodes.NO_CONTENT);
 };
