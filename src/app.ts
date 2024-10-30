@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import "express-async-errors";
 import express, { json } from "express";
 import morgan from "morgan";
-import { connectDB } from "./db/connect";
+import { connectMongo } from "./config";
 import authRouter from "./routes/auth.route";
 import notFound from "./middleware/notFound";
 import errorHandler from "./middleware/errors";
@@ -22,7 +22,7 @@ app.use(errorHandler);
 
 const start = async () => {
   try {
-    await connectDB(process.env.MONGO_URI!);
+    await connectMongo(process.env.MONGO_URI!);
 
     app.listen(PORT, () => {
       console.log(`Server is listening on port ${PORT}...`);

@@ -25,6 +25,7 @@
     "@types/joi": "^17.2.2",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
+    "@types/redis": "^4.0.10",
     "@types/validator": "^13.12.2",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@typescript-eslint/parser": "^8.11.0",
@@ -50,6 +51,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.2",
     "morgan": "^1.10.0",
+    "redis": "^4.7.0",
     "validator": "^13.12.0",
     "xss-clean": "^0.1.4"
   }
