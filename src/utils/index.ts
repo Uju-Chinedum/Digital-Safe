@@ -1,3 +1,4 @@
 import { createJWT, verifyToken } from "./jwt";
+import blacklistToken from "./blacklistToken";
 
-export { createJWT, verifyToken };
+export { createJWT, verifyToken, blacklistToken };

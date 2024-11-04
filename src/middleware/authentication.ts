@@ -26,7 +26,7 @@ const authenticateUser = async (
     const { userId, email, exp } = verifyToken(token);
     req.user = { userId, email };
 
-    if (req.url === "/logout") {
+    if (req.url === "/logout" || req.url === "/delete-me") {
       req.user.exp = exp;
       req.user.token = token;
     }

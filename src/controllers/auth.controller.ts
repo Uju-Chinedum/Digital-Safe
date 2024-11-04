@@ -5,7 +5,7 @@ import { IUser } from "../models";
 import { BadRequest, Unauthenticated } from "../errors";
 import { createJWT } from "../utils";
 import { TokenPayload } from "../utils/types";
-import { redisClient } from "../config";
+import { blacklistToken } from "../utils";
 
 export const register = async (req: Request, res: Response) => {
   if (!req.body)
@@ -54,21 +54,10 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const token = req.user?.token;
-  if (!token) {
-    throw new Unauthenticated("Unauthorized", "No token provided");
-  }
+  const token = req.user?.token!;
+  const exp = req.user?.exp!;
 
-  const expirationTime = req.user?.exp
-    ? req.user.exp - Math.floor(Date.now() / 1000)
-    : 0;
-
-  // Check if expirationTime is a positive number, otherwise set a default
-  const ttl = expirationTime > 0 ? expirationTime : 3600; // 1 hour fallback if no valid expiration time
-
-  await redisClient.set(token, "blacklisted", {
-    EX: ttl,
-  });
+  await blacklistToken(token, exp);
 
   res.status(StatusCodes.OK).json({
     status: "success",

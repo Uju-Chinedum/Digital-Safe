@@ -4,9 +4,10 @@ import { StatusCodes } from "http-status-codes";
 import { EditPasswordDto, EditUserDto } from "../dto";
 import { BadRequest, NotFound, Unauthenticated } from "../errors";
 import { IUser } from "../models";
+import { blacklistToken } from "../utils";
 
 export const getMe = async (req: Request, res: Response) => {
-  const user = await UserModel.findOne({ _id: req.user?.userId }) as IUser;
+  const user = (await UserModel.findOne({ _id: req.user?.userId })) as IUser;
   if (!user) {
     throw new NotFound("Missing User", "This user does not exist");
   }
@@ -34,10 +35,14 @@ export const updateMe = async (
     email: req.body.email,
   };
 
-  const user = await UserModel.findByIdAndUpdate(req.user?.userId, updateBody, {
-    new: true,
-    runValidators: true,
-  }) as IUser;
+  const user = (await UserModel.findByIdAndUpdate(
+    req.user?.userId,
+    updateBody,
+    {
+      new: true,
+      runValidators: true,
+    },
+  )) as IUser;
   if (!user) {
     throw new NotFound("Missing User", "This user does not exist");
   }
@@ -61,7 +66,7 @@ export const updatePassword = async (
     throw new BadRequest("Missing Details", "Please fill all fields");
   }
 
-  const user = await UserModel.findOne({ _id: req.user?.userId }) as IUser;
+  const user = (await UserModel.findOne({ _id: req.user?.userId })) as IUser;
   if (!user) {
     throw new NotFound("Missing User", "This user does not exist");
   }
@@ -79,18 +84,22 @@ export const updatePassword = async (
     data: {
       code: StatusCodes.OK,
       message: "User deleted successfully",
-      user
+      user,
     },
   });
 };
 
 export const deleteMe = async (req: Request, res: Response) => {
-  const user = await UserModel.findByIdAndDelete(req.user?.userId) as IUser;
+  const token = req.user?.token!;
+  const exp = req.user?.exp!;
+
+  const user = (await UserModel.findByIdAndDelete(req.user?.userId)) as IUser;
   if (!user) {
     throw new NotFound("Missing User", "This user does not exist");
   }
 
   await user?.deleteOne();
+  await blacklistToken(token, exp);
 
   res.status(StatusCodes.OK).json({
     status: "success",
