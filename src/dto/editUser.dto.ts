@@ -3,4 +3,4 @@ export interface EditUserDto {
   email?: string;
 }
 
-export default EditUserDto
+export default EditUserDto;
