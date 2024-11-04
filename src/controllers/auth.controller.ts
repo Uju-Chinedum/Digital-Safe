@@ -14,8 +14,12 @@ export const register = async (req: Request, res: Response) => {
   const user: IUser = await UserModel.create(req.body);
 
   res.status(StatusCodes.CREATED).json({
-    code: StatusCodes.CREATED,
-    data: { message: "User created successfully", user },
+    status: "success",
+    data: {
+      code: StatusCodes.CREATED,
+      message: "User created successfully",
+      user,
+    },
   });
 };
 
@@ -39,8 +43,9 @@ export const login = async (req: Request, res: Response) => {
   const token = createJWT(payload);
 
   res.status(StatusCodes.OK).json({
-    code: StatusCodes.OK,
+    status: "success",
     data: {
+      code: StatusCodes.OK,
       message: "User logged in successfully",
       user,
       token,
@@ -49,7 +54,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const token = req.user?.token
+  const token = req.user?.token;
   if (!token) {
     throw new Unauthenticated("Unauthorized", "No token provided");
   }
@@ -66,7 +71,7 @@ export const logout = async (req: Request, res: Response) => {
   });
 
   res.status(StatusCodes.OK).json({
-    code: StatusCodes.OK,
-    data: { message: "User logged out successfully" },
+    status: "success",
+    data: { code: StatusCodes.OK, message: "User logged out successfully" },
   });
 };

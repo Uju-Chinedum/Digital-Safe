@@ -1,9 +1,9 @@
 class CustomError extends Error {
-  public statusCode: number;
+  public code: number;
 
-  constructor(message: string, statusCode: number) {
+  constructor(message: string, code: number) {
     super(message);
-    this.statusCode = statusCode;
+    this.code = code;
     Object.setPrototypeOf(this, CustomError.prototype);
   }
 }

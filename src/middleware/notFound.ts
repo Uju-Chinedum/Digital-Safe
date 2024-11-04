@@ -6,7 +6,7 @@ const notFound = (req: Request, res: Response) => {
     code: StatusCodes.NOT_FOUND,
     data: {
       name: "Page Not Found",
-      msg: "Page does not exist. Please recheck URL",
+      message: "Page does not exist. Please recheck URL",
     },
   });
 };

@@ -10,7 +10,7 @@ const errorHandler = (
   next: NextFunction,
 ) => {
   let customError: CustomError = {
-    statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+    code: err.code || StatusCodes.INTERNAL_SERVER_ERROR,
     name: err.name || "Internal Server Error",
     message: err.message || "Something went wrong!! Please try again.",
   };
@@ -24,7 +24,7 @@ const errorHandler = (
       .map((item) => item.message)
       .join(", ");
       
-    customError.statusCode = StatusCodes.BAD_REQUEST;
+    customError.code = StatusCodes.BAD_REQUEST;
   }
 
   // Duplicate Error
@@ -35,18 +35,18 @@ const errorHandler = (
     )} is already used by a user. Please use another ${Object.keys(
       err.keyValue,
     )}.`;
-    customError.statusCode = StatusCodes.BAD_REQUEST;
+    customError.code = StatusCodes.BAD_REQUEST;
   }
 
   // Type Error
   if (err.name === "CastError") {
     customError.name = "Not Found";
     customError.message = `No item found with id: ${err.value}`;
-    customError.statusCode = StatusCodes.NOT_FOUND;
+    customError.code = StatusCodes.NOT_FOUND;
   }
 
-  res.status(customError.statusCode).json({
-    code: customError.statusCode,
+  res.status(customError.code).json({
+    status: "failed",
     data: customError,
   });
 };

@@ -1,15 +1,19 @@
 import { Request, Response } from "express";
 import UserModel from "../models/User";
 import { StatusCodes } from "http-status-codes";
-import { EditUserDto } from "../dto/editUser.dto";
+import { EditUserDto } from "../dto";
 import { BadRequest, NotFound } from "../errors";
 
 export const getMe = async (req: Request, res: Response) => {
   const user = await UserModel.findOne({ _id: req.user?.userId });
+  if (!user) {
+    throw new NotFound("Missing User", "This user does not exist");
+  }
 
   res.status(StatusCodes.OK).json({
-    status: StatusCodes.OK,
+    status: "success",
     data: {
+      code: StatusCodes.OK,
       message: "Gotten Current User",
       user,
     },
@@ -26,10 +30,14 @@ export const updateMe = async (req: Request, res: Response) => {
     new: true,
     runValidators: true,
   });
+  if (!user) {
+    throw new NotFound("Missing User", "This user does not exist");
+  }
 
   res.status(StatusCodes.OK).json({
-    status: StatusCodes.OK,
+    status: "success",
     data: {
+      code: StatusCodes.OK,
       message: "User updated successfully",
       user,
     },
@@ -41,5 +49,18 @@ export const updatePassword = async (req: Request, res: Response) => {
 };
 
 export const deleteMe = async (req: Request, res: Response) => {
-  res.send("Delete Me");
+  const user = await UserModel.findByIdAndDelete(req.user?.userId);
+  if (!user) {
+    throw new NotFound("Missing User", "This user does not exist");
+  }
+
+  await user?.deleteOne();
+
+  res.status(StatusCodes.OK).json({
+    status: "success",
+    data: {
+      code: StatusCodes.OK,
+      message: "User deleted successfully",
+    },
+  });
 };
