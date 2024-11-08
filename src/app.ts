@@ -5,6 +5,7 @@ import morgan from "morgan";
 import { connectMongo } from "./config";
 import authRouter from "./routes/auth.route";
 import userRouter from "./routes/user.route";
+import safeRouter from "./routes/safe.route";
 import notFound from "./middleware/notFound";
 import errorHandler from "./middleware/errors";
 import authenticateUser from "./middleware/authentication";
@@ -19,6 +20,7 @@ app.use(morgan("dev"));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", authenticateUser, userRouter);
+app.use("/api/v1/safe", authenticateUser, safeRouter);
 
 app.use(notFound);
 app.use(errorHandler);
