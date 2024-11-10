@@ -9,11 +9,16 @@ import safeRouter from "./routes/safe.route";
 import notFound from "./middleware/notFound";
 import errorHandler from "./middleware/errors";
 import authenticateUser from "./middleware/authentication";
+import helmet from "helmet";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 const PORT = 5000;
+
+app.use(helmet())
+app.use(cors())
 
 app.use(json());
 app.use(morgan("dev"));
