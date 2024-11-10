@@ -8,20 +8,30 @@ export const createSafe = async (req: Request, res: Response) => {
   if (!req.body)
     throw new BadRequest("Validation Error", "Please fill missing fields.");
 
-  const user: ISafe = await SafeModel.create(req.body);
+  const safe: ISafe = await SafeModel.create(req.body);
 
   res.status(StatusCodes.CREATED).json({
     status: "success",
     data: {
       code: StatusCodes.CREATED,
       message: "Safe created successfully",
-      user,
+      safe,
     },
   });
 };
 
 export const getSafes = async (req: Request, res: Response) => {
-  res.send("Get Safes");
+  const safes = (await SafeModel.find({ user: req.user?.userId })) as ISafe[];
+
+  res.status(StatusCodes.CREATED).json({
+    status: "success",
+    data: {
+      code: StatusCodes.CREATED,
+      message: "Safe created successfully",
+      safes,
+      total: safes.length,
+    },
+  });
 };
 
 export const getSafe = async (req: Request, res: Response) => {
