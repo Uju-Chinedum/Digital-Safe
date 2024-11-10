@@ -1,10 +1,7 @@
 import joi from "joi";
 import { BadRequest } from "../errors";
 import { NextFunction, Request, Response } from "express";
-
-// Regex for password validation: at least 1 uppercase, 1 lowercase, 1 digit, 1 special char, and minimum 8 characters
-const passwordRegex =
-  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+import { userRegex } from "../utils";
 
 const userValidationSchema = joi.object({
   name: joi.string().required().messages({
@@ -16,7 +13,7 @@ const userValidationSchema = joi.object({
     "string.empty": "Email should not be empty.",
     "string.email": "Email should be a valid email address.",
   }),
-  password: joi.string().pattern(passwordRegex).required().messages({
+  password: joi.string().pattern(userRegex).required().messages({
     "any.required": "Password is required.",
     "string.empty": "Password should not be empty.",
     "string.pattern.base":

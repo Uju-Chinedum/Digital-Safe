@@ -1,7 +1,23 @@
 import { Request, Response } from "express";
+import { BadRequest } from "../errors";
+import { ISafe } from "../models";
+import SafeModel from "../models/Safe";
+import { StatusCodes } from "http-status-codes";
 
 export const createSafe = async (req: Request, res: Response) => {
-  res.send("Create Safe");
+  if (!req.body)
+    throw new BadRequest("Validation Error", "Please fill missing fields.");
+
+  const user: ISafe = await SafeModel.create(req.body);
+
+  res.status(StatusCodes.CREATED).json({
+    status: "success",
+    data: {
+      code: StatusCodes.CREATED,
+      message: "Safe created successfully",
+      user,
+    },
+  });
 };
 
 export const getSafes = async (req: Request, res: Response) => {

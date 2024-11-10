@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 import { ISafe } from ".";
 import { compare, genSalt, hash } from "bcryptjs";
+import { safeRegex } from "../utils";
 
 const SafeSchema = new Schema<ISafe>(
   {
@@ -11,9 +12,9 @@ const SafeSchema = new Schema<ISafe>(
     password: {
       type: String,
       required: true,
-      minlength: 8,
+      minlength: 6,
       match:
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        safeRegex
     },
     contents: [
       {

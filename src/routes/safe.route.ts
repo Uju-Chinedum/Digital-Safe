@@ -7,10 +7,11 @@ import {
   updatePassword,
   updateSafe,
 } from "../controllers/safe.controller";
+import validateSafe from "../validation/safe.validation";
 
 const router = Router();
 
-router.route("/").post(createSafe).get(getSafes);
+router.route("/").post(validateSafe, createSafe).get(getSafes);
 router.patch("/update-password", updatePassword);
 router.route("/:id").get(getSafe).patch(updateSafe).delete(deleteSafe);
 

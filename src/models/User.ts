@@ -2,6 +2,7 @@ import { model, Schema } from "mongoose";
 import { IUser } from ".";
 import { isEmail } from "validator";
 import { compare, genSalt, hash } from "bcryptjs";
+import { userRegex } from "../utils";
 
 const UserSchema = new Schema<IUser>(
   {
@@ -24,7 +25,7 @@ const UserSchema = new Schema<IUser>(
       required: true,
       minlength: 8,
       match:
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        userRegex
     },
   },
   {
