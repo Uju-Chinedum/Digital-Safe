@@ -83,7 +83,7 @@ export const updatePassword = async (
     status: "success",
     data: {
       code: StatusCodes.OK,
-      message: "User deleted successfully",
+      message: "Password updated successfully",
       user,
     },
   });

@@ -18,7 +18,7 @@ const authenticateUser = async (
   if (isBlacklisted) {
     throw new Unauthenticated(
       "Unauthorized",
-      "Token has been revoked. Please login again.",
+      "Token has expired. Please login again.",
     );
   }
 
